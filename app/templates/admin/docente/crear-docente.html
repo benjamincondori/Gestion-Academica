@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'partials/navbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'partials/sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-page">
+        <div class="content">
+
+            <!-- Start Content-->
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Panel Admin</a></li>
+                                    <li class="breadcrumb-item active">Docentes</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Docentes</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card-box">
+
+                            <div class="form-group px-4 pt-2">
+                                <i class="fas fa-user-plus fa-2x"></i>
+                                <h3 class="fs-1 d-inline-block ml-1">Crear nuevo docente</h3>
+                            </div>
+
+                            <form class="px-4 pt-2 pb-2" method="POST" enctype="multipart/form-data">
+                                {{ form.hidden_tag() }}
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        <div class="alert-container">
+                                            {% for category, message in messages %}
+                                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+                                                     role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    {{ message }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="nombre" class="control-label">Nombre</label>
+                                            {{ form.nombre(class="form-control") }}
+                                            {% for error in form.nombre.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="apellido" class="control-label">Apellido</label>
+                                            {{ form.apellido(class="form-control") }}
+                                            {% for error in form.apellido.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="email" class="control-label">Email</label>
+                                            {{ form.email(class="form-control") }}
+                                            {% for error in form.email.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="direccion" class="control-label">Dirección</label>
+                                            {{ form.direccion(class="form-control") }}
+                                            {% for error in form.direccion.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="cedula_identidad" class="control-label">Cédula de
+                                                identidad</label>
+                                            {{ form.cedula_identidad(class="form-control", type="number", min="0") }}
+                                            {% for error in form.cedula_identidad.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="telefono" class="control-label">Número
+                                                telefónico</label>
+                                            {{ form.telefono(class="form-control", type="number", min="0") }}
+                                            {% for error in form.telefono.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="foto" class="control-label">Foto de Perfil</label>
+                                            {{ form.foto(class="form-control-file", accept="image/*", onchange="previewImage(event)") }}
+                                            {% for error in form.foto.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="form-group ">
+                                            <div class="foto-perfil-container">
+                                                <img id="foto-preview"
+                                                     src="{{ url_for('static', filename = 'img/usuario.png') }}"
+                                                     alt="Previsualización de la foto de perfil"
+                                                     class="img-fluid">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Género</label>
+                                            {% for subfield in form.genero %}
+                                                <div class="custom-control custom-radio {% if not loop.first %}mt-1{% endif %}">
+                                                    {{ subfield(class="custom-control-input") }}
+                                                    {{ subfield.label(class="custom-control-label") }}
+                                                </div>
+                                            {% endfor %}
+                                            {% for error in form.genero.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group text-right m-b-0">
+                                    <a href="{{ url_for('admin.docente.listar_docentes') }}"
+                                       class="btn btn-danger waves-effect m-l-5">
+                                        Cancelar
+                                    </a>
+                                    {{ form.submit(class="btn btn-primary waves-effect waves-light") }}
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- container -->
+
+        </div> <!-- content -->
+
+        {% include 'partials/footer.html' %}
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include 'partials/footer.html' %}
+{% endblock %}
+
+{% block head %}
+    <!-- Estilos personalizados -->
+    <style>
+        .foto-perfil-container {
+            width: 170px;
+            height: 170px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            display: inline-block;
+            position: relative;
+            background-color: #f8f9fa;
+        }
+
+        #foto-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Hace que la imagen se ajuste manteniendo las proporciones */
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('foto-preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // Si se elimina la selección, vuelve a la imagen por defecto
+                preview.src = "{{ url_for('static', filename = 'img/usuario.png') }}";
+            }
+        }
+    </script>
+{% endblock %}

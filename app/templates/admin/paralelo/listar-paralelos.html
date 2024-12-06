@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'partials/navbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'partials/sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-page">
+        <div class="content">
+
+            <!-- Start Content-->
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Panel Admin</a></li>
+                                    <li class="breadcrumb-item active">Paralelos</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Paralelos</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div class="row">
+                    <div class="col-12">
+
+                        <div class="mb-2 d-flex justify-content-between">
+                            <div class="form-group">
+                                <a href="{{ url_for('admin.paralelo.crear_paralelo') }}"
+                                   class="btn btn-primary waves-effect waves-light">
+                                    <i class="fas fa-plus-circle"></i>&nbsp;
+                                    Nuevo Paralelo
+                                </a>
+                            </div>
+                        </div>
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="alert-container">
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+                                             role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+
+                        <div class="card-box">
+                            <div class="table-responsive">
+                                <table id="table-clientes" class="table table-hover mb-0 dts">
+                                    <thead class="bg-dark text-center text-white text-nowrap">
+                                    <tr style="cursor: pointer">
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Nombre</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for paralelo in paralelos %}
+                                        <tr class="text-nowrap text-center">
+                                            <td class="align-middle">{{ paralelo.id }}</td>
+                                            <td class="align-middle">{{ paralelo.nombre }}</td>
+                                            <td class="align-middle text-nowrap">
+                                                <div class="d-flex justify-content-center">
+                                                    <a href="{{ url_for('admin.paralelo.actualizar_paralelo', id=paralelo.id) }}"
+                                                       title="Editar"
+                                                       class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button class="btn btn-danger btn-sm ml-1" title="Eliminar"
+                                                            onclick="confirmarEliminacion('{{ paralelo.id }}')">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- container -->
+
+        </div> <!-- content -->
+
+        {% include 'partials/footer.html' %}
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include 'partials/footer.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function confirmarEliminacion(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción eliminará el paralelo de forma permanente.",
+                icon: 'warning',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Eliminar',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la URL de eliminación si el usuario confirma
+                    window.location.href = '/admin/paralelos/delete/' + id;
+                }
+            });
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'partials/navbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'partials/sidebar-docente.html' %}
+{% endblock %}
+
+
+{% block content %}
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <!-- Título de la página -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <h4 class="page-title">Consultar Calificaciones</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de selección -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card-box">
+                        <form action="{{ url_for('docente.calificaciones.consultar_calificaciones') }}" method="POST">
+                            <div class="form-group">
+                                <label for="estudiante">Seleccionar Estudiante</label>
+                                <select name="estudiante_codigo" id="estudiante" class="form-control">
+                                    {% for estudiante in estudiantes %}
+                                        <option value="{{ estudiante.codigo }}">{{ estudiante.nombre }} {{ estudiante.apellido_paterno }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="materia">Seleccionar Materia</label>
+                                <select name="materia_id" id="materia" class="form-control">
+                                    {% for materia in materias %}
+                                        <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Consultar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de calificaciones -->
+            {% if calificaciones %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="card-box">
+                        <h4 class="header-title">Calificaciones de {{ estudiante_seleccionado.nombre }} en {{ materia_seleccionada.nombre }}</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="bg-dark text-white">
+                                    <tr>
+                                        <th>Evaluación</th>
+                                        <th>Calificación</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for calificacion in calificaciones %}
+                                        <tr>
+                                            <td>{{ calificacion.evaluacion }}</td>
+                                            <td>{{ calificacion.nota }}</td>
+                                            <td>{{ calificacion.fecha }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

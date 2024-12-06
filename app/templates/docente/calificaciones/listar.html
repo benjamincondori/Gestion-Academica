@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'partials/navbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'partials/sidebar-docente.html' %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="content-page">
+        <div class="content">
+
+            <!-- Start Content-->
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Panel Admin</a></li>
+                                    <li class="breadcrumb-item active">Consultar Calificaciones</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Consultar Calificaciones</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card-box">
+                            <form id="form-calificaciones"
+                                  method="POST">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="estudiante_codigo">Seleccionar Estudiante</label>
+                                            <select name="estudiante_codigo" id="estudiante_codigo"
+                                                    class="form-control">
+                                                <option value="">Seleccionar Estudiante</option>
+                                                {% for estudiante in estudiantes %}
+                                                    <option value="{{ estudiante.codigo }}">{{ estudiante.nombre }} {{ estudiante.apellido_paterno }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="materia_id">Seleccionar Materia</label>
+                                            <select name="materia_id" id="materia_id" class="form-control">
+                                                <option value="">Seleccionar Materia</option>
+                                                {% for materia in materias %}
+                                                    <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="periodo_id">Seleccionar Periodo</label>
+                                            <select name="periodo_id" id="periodo_id" class="form-control">
+                                                <option value="">Seleccionar Periodo</option>
+                                                {% for periodo in periodos %}
+                                                    <option value="{{ periodo.id }}">{{ periodo.nombre }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Consultar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <div id="resultados" class="mt-4"></div>
+
+            </div> <!-- container -->
+
+        </div> <!-- content -->
+
+        {% include 'partials/footer.html' %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const estudianteSelect = document.getElementById("estudiante_codigo");
+            const materiaSelect = document.getElementById("materia_id");
+
+            // Agregar una opción por defecto al select de materias
+            materiaSelect.innerHTML = '<option value="" disabled selected>Seleccionar materia</option>';
+
+            estudianteSelect.addEventListener("change", function () {
+                const estudianteCodigo = estudianteSelect.value;
+
+                // Limpiar las materias
+                materiaSelect.innerHTML = '<option value="" disabled selected>Seleccionar materia</option>';
+
+                if (estudianteCodigo) {
+                    // Hacer una solicitud al backend para obtener las materias
+                    fetch(`/docente/calificaciones/obtener_materias?estudiante_codigo=${estudianteCodigo}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                alert(data.error);
+                                return;
+                            }
+
+                            // Agregar las materias al select
+                            data.forEach(materia => {
+                                const option = document.createElement("option");
+                                option.value = materia.id;
+                                option.textContent = materia.nombre;
+                                materiaSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error("Error al cargar las materias:", error);
+                        });
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+        document.getElementById('form-calificaciones').addEventListener('submit', function (event) {
+            event.preventDefault(); // Evita el envío normal del formulario
+            const formData = new FormData(event.target);
+
+            // Hacer la solicitud al backend
+            fetch('/docente/calificaciones/consultar_calificaciones', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const resultadosDiv = document.getElementById('resultados');
+                    resultadosDiv.innerHTML = ''; // Limpiar resultados previos
+
+                    if (data.error) {
+                        resultadosDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                        return;
+                    }
+
+                    // Renderizar los resultados por periodo
+                    for (const [periodo, datos] of Object.entries(data)) {
+                        const notasHTML = datos.notas.map(nota => `
+                    <tr>
+                        <td>${nota.nota}</td>
+                        <td>${nota.descripcion}</td>
+                    </tr>
+                `).join('');
+
+                        resultadosDiv.innerHTML += `
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5>Periodo: ${periodo}</h5>
+                            <p>Promedio: ${datos.promedio.toFixed(2)}</p>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nota</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${notasHTML}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al consultar calificaciones:', error);
+                });
+        });
+    </script>
+
+{% endblock %}
+

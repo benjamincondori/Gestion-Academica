@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'partials/navbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'partials/sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-page">
+        <div class="content">
+
+            <!-- Start Content-->
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Panel Admin</a></li>
+                                    <li class="breadcrumb-item active">Periodos</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Periodos</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card-box">
+
+                            <div class="form-group px-4 pt-2">
+                                <i class="fas fa-user-plus fa-2x"></i>
+                                <h3 class="fs-1 d-inline-block ml-1">Crear nuevo periodo</h3>
+                            </div>
+
+                            <form class="px-4 pt-2 pb-2" method="POST">
+                                {{ form.hidden_tag() }}
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        <div class="alert-container">
+                                            {% for category, message in messages %}
+                                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+                                                     role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    {{ message }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="nombre" class="control-label">Nombre</label>
+                                            {{ form.nombre(class="form-control", id="nombre", placeholder="Primer Bimestre") }}
+                                            {% for error in form.nombre.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="gestion_id" class="control-label">Gestión</label>
+                                            {{ form.gestion_id(class="form-control", id="gestion_id") }}
+                                            {% for error in form.gestion_id.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="fecha_inicio" class="control-label">Fecha de Inicio</label>
+                                            {{ form.fecha_inicio(class="form-control", type="date", id="fecha_inicio") }}
+                                            {% for error in form.fecha_inicio.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="fecha_fin" class="control-label">Fecha de Finalización</label>
+                                            {{ form.fecha_fin(class="form-control", type="date", id="fecha_fin") }}
+                                            {% for error in form.fecha_fin.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group  m-b-0">
+                                    <a href="{{ url_for('admin.periodo.listar_periodos') }}"
+                                       class="btn btn-danger waves-effect m-l-5">
+                                        Cancelar
+                                    </a>
+                                    {{ form.submit(class="btn btn-primary waves-effect waves-light") }}
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- container -->
+
+        </div> <!-- content -->
+
+        {% include 'partials/footer.html' %}
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include 'partials/footer.html' %}
+{% endblock %}
+

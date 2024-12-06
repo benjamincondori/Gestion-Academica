@@ -1,0 +1,87 @@
+<!-- Topbar Start -->
+<div class="navbar-custom">
+    <ul class="list-unstyled topnav-menu float-right mb-0">
+
+        <li class="dropdown notification-list">
+            <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect" data-toggle="dropdown" href="#" role="button"
+               aria-haspopup="false" aria-expanded="false">
+                {% if g.usuario.docente %}
+                    <img src="{{ url_for('static', filename=(g.usuario.docente.imagen_url if g.usuario.docente.imagen_url  else 'img/usuario.png')) }}"
+                         alt="user-image" class="rounded-circle">
+                {% elif g.usuario.estudiante %}
+                    <img src="{{ url_for('static', filename=(g.usuario.estudiante.imagen_url if g.usuario.estudiante.imagen_url  else 'img/usuario.png')) }}"
+                         alt="user-image" class="rounded-circle">
+                {% else %}
+                    <img src="{{ url_for('static', filename = 'images/users/user-1.jpg') }}" alt="user-image"
+                         class="rounded-circle">
+                {% endif %}
+
+                <span class="pro-user-name ml-1">
+                    {% if g.usuario.docente %}
+                        {{ g.usuario.docente.nombre_completo }}
+                    {% elif g.usuario.estudiante %}
+                        {{ g.usuario.estudiante.nombre_completo }}
+                    {% else %}
+                        {{ g.usuario.email }}
+                    {% endif %}
+                    <i class="mdi mdi-chevron-down"></i>
+                </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                <!-- item-->
+                <div class="dropdown-item noti-title">
+                    <h5 class="m-0 text-white">
+                        Bienvenido !
+                    </h5>
+                </div>
+
+                <!-- item-->
+                <a href="javascript:void(0);" class="dropdown-item notify-item">
+                    <i class="fe-user"></i>
+                    <span>Mi perfil</span>
+                </a>
+
+                <!-- item-->
+                <a href="javascript:void(0);" class="dropdown-item notify-item">
+                    <i class="fe-settings"></i>
+                    <span>Configuración</span>
+                </a>
+
+                <div class="dropdown-divider"></div>
+
+                <!-- item-->
+                <a href="{{ url_for('auth.logout') }}" class="dropdown-item notify-item">
+                    <i class="fe-log-out"></i>
+                    <span>Cerrar sesión</span>
+                </a>
+
+            </div>
+        </li>
+
+    </ul>
+
+    <!-- LOGO -->
+    <div class="logo-box">
+        <a href="index.html" class="logo text-center">
+                        <span class="logo-lg">
+                            <img src="{{ url_for('static', filename = 'images/logo-light.png') }}" alt="" height="16">
+                            <!-- <span class="logo-lg-text-light">Xeria</span> -->
+                        </span>
+            <span class="logo-sm">
+                            <!-- <span class="logo-sm-text-dark">X</span> -->
+                            <img src="{{ url_for('static', filename = 'images/logo-sm.png') }}" alt="" height="18">
+                        </span>
+        </a>
+    </div>
+
+    <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
+        <li>
+            <button class="button-menu-mobile waves-effect">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </li>
+    </ul>
+</div>
+<!-- end Topbar -->

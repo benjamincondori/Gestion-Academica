@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'partials/navbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'partials/sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-page">
+        <div class="content">
+
+            <!-- Start Content-->
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Panel Admin</a></li>
+                                    <li class="breadcrumb-item active">Estudiantes</li>
+                                </ol>
+                            </div>
+                            <h4 class="page-title">Estudiantes</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card-box">
+
+                            <div class="form-group px-4 pt-2">
+                                <i class="fas fa-pencil-alt fa-2x"></i>
+                                <h3 class="fs-1 d-inline-block ml-1">Editar estudiante</h3>
+                            </div>
+
+                            <form class="px-4 pt-2 pb-2" method="post" enctype="multipart/form-data">
+
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        <div class="alert-container">
+                                            {% for category, message in messages %}
+                                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+                                                     role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    {{ message }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="nombre" class="control-label">Nombre</label>
+                                            <input type="text" id="nombre" name="nombre"
+                                                   class="form-control" value="{{ estudiante.nombre }}"
+                                                   placeholder="John">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="apellido_paterno" class="control-label">Apellido Paterno</label>
+                                            <input type="text" id="apellido_paterno" name="apellido_paterno"
+                                                   class="form-control" value="{{ estudiante.apellido_paterno }}"
+                                                   placeholder="Doe">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="apellido_materno" class="control-label">Apellido Materno</label>
+                                            <input type="text" id="apellido_materno" name="apellido_materno"
+                                                   class="form-control" value="{{ estudiante.apellido_materno }}"
+                                                   placeholder="Seven">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="email" class="control-label">Email</label>
+                                            <input type="email" id="email" name="email"
+                                                   class="form-control" value="{{ estudiante.usuario.email }}" readonly
+                                                   placeholder="jhondoe@gmail.com">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="direccion" class="control-label">Dirección</label>
+                                            <input type="text" id="direccion" name="direccion"
+                                                   class="form-control" value="{{ estudiante.direccion }}"
+                                                   placeholder="Address">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="cedula_identidad" class="control-label">Cédula de
+                                                identidad</label>
+                                            <input type="number" min="0" id="cedula_identidad" name="cedula_identidad"
+                                                   class="form-control" value="{{ estudiante.cedula_identidad }}"
+                                                   placeholder="1234567">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="telefono" class="control-label">Número
+                                                telefónico</label>
+                                            <input type="number" min="0" id="telefono" name="telefono"
+                                                   class="form-control" value="{{ estudiante.telefono }}"
+                                                   placeholder="77664412">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group  ">
+                                            <label for="fecha_nacimiento" class="control-label">Fecha de
+                                                nacimiento</label>
+                                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento"
+                                                   class="form-control" value="{{ estudiante.fecha_nacimiento }}"
+                                                   placeholder="Fecha de nacimiento">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Género</label>
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" value="Femenino" name="genero"
+                                                       class="custom-control-input" {{ 'checked' if estudiante.genero == 'Femenino' }}
+                                                       id="femenino" >
+                                                <label for="femenino" class="custom-control-label">Femenino</label>
+                                            </div>
+                                            <div class="custom-control custom-radio mt-1">
+                                                <input type="radio" value="Masculino" name="genero"
+                                                       class="custom-control-input" {{ 'checked' if estudiante.genero == 'Masculino' }}
+                                                       id="masculino">
+                                                <label for="masculino" class="custom-control-label">Masculino</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="foto" class="control-label">Foto de Perfil</label>
+                                            <input type="file" id="foto" name="foto"
+                                                   class="form-control-file"
+                                                   accept="image/*" onchange="previewImage(event)">
+                                        </div>
+                                        <div class="form-group ">
+                                            <div class="foto-perfil-container">
+                                                <img id="foto-preview"
+                                                     src="{{ url_for('static', filename = estudiante.imagen_url if estudiante.imagen_url else 'img/usuario.png') }}"
+                                                     alt="Previsualización de la foto de perfil"
+                                                     class="img-fluid">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group text-right m-b-0">
+                                    <a href="{{ url_for('admin.estudiante.listar_estudiantes') }}"
+                                       class="btn btn-danger waves-effect m-l-5">
+                                        Cancelar
+                                    </a>
+                                    <button class="btn btn-primary waves-effect waves-light" type="submit">
+                                        Guardar
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- container -->
+
+        </div> <!-- content -->
+
+        {% include 'partials/footer.html' %}
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include 'partials/footer.html' %}
+{% endblock %}
+
+{% block head %}
+    <!-- Estilos personalizados -->
+    <style>
+        .foto-perfil-container {
+            width: 170px;
+            height: 170px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            display: inline-block;
+            position: relative;
+            background-color: #f8f9fa;
+        }
+
+        #foto-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Hace que la imagen se ajuste manteniendo las proporciones */
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('foto-preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // Si se elimina la selección, vuelve a la imagen por defecto
+                preview.src = "{{ url_for('static', filename = 'img/usuario.png') }}";
+            }
+        }
+    </script>
+{% endblock %}

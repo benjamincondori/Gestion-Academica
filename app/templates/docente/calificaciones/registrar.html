@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'partials/navbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'partials/sidebar-docente.html' %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+
+                <!-- Título de la página -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box">
+                            <h4 class="page-title">Registrar Calificación</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de registro -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card-box">
+
+                            <div class="form-group px-4 pt-2">
+                                <i class="fas fa-check-square fa-2x"></i>
+                                <h3 class="fs-1 d-inline-block ml-1">Registrar Calificación</h3>
+                            </div>
+
+                            <form class="px-4 pt-2 pb-2" method="POST">
+
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        <div class="alert-container">
+                                            {% for category, message in messages %}
+                                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+                                                     role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    {{ message }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="estudiante_codigo"
+                                                   class="control-label">Estudiante</label>
+                                            <select id="estudiante_codigo" name="estudiante_codigo"
+                                                    class="form-control" required>
+                                                <option value="" disabled selected>Seleccionar estudiante</option>
+                                                {% for estudiante in estudiantes %}
+                                                    <option value="{{ estudiante.codigo }}">{{ estudiante.nombre_completo }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="materia_id" class="control-label">Materia</label>
+                                            <select id="materia_id" name="materia_id" class="form-control" required>
+                                                <option value="" disabled selected>Seleccionar materia</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="nota" class="control-label">Nota</label>
+                                            <input type="number" name="nota" id="nota" class="form-control" min="0" max="100" required placeholder="Ej. 70.5">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="periodo_id" class="control-label">Periodo</label>
+                                            <select id="periodo_id" name="periodo_id" class="form-control" required>
+                                                <option value="" disabled selected>Seleccionar periodo</option>
+                                                {% for periodo in periodos %}
+                                                    <option value="{{ periodo.id }}">{{ periodo.nombre }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="descripcion" class="control-label">Descripción</label>
+                                            <textarea name="descripcion" id="descripcion" class="form-control" rows="4" required placeholder="Ej. Examen final"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group  m-b-0">
+                                    <button type="submit" class="btn btn-primary waves-effect waves-light">
+                                        Registrar
+                                    </button>
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {% include 'partials/footer.html' %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const estudianteSelect = document.getElementById("estudiante_codigo");
+            const materiaSelect = document.getElementById("materia_id");
+
+            // Agregar una opción por defecto al select de materias
+            materiaSelect.innerHTML = '<option value="" disabled selected>Seleccionar materia</option>';
+
+            estudianteSelect.addEventListener("change", function () {
+                const estudianteCodigo = estudianteSelect.value;
+
+                // Limpiar las materias
+                materiaSelect.innerHTML = '<option value="" disabled selected>Seleccionar materia</option>';
+
+                if (estudianteCodigo) {
+                    // Hacer una solicitud al backend para obtener las materias
+                    fetch(`/docente/calificaciones/obtener_materias?estudiante_codigo=${estudianteCodigo}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                alert(data.error);
+                                return;
+                            }
+
+                            // Agregar las materias al select
+                            data.forEach(materia => {
+                                const option = document.createElement("option");
+                                option.value = materia.id;
+                                option.textContent = materia.nombre;
+                                materiaSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error("Error al cargar las materias:", error);
+                        });
+                }
+            });
+        });
+
+    </script>
+
+{% endblock %}
